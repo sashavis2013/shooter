@@ -7,30 +7,33 @@ using UnityEngine.Rendering.Universal;
 public class PlayerHealth : Health
 {
     public float dieForce = 15.0f;
-    Ragdoll ragdoll;
-    ActiveWeapon weapons;
-    CharacterAiming aiming;
-    VolumeProfile postProcessing;
-    CameraManager cameraManager;
+    Ragdoll _ragdoll;
+    ActiveWeapon _weapons;
+    CharacterAiming _aiming;
+    VolumeProfile _postProcessing;
+    CameraManager _cameraManager;
 
     protected override void OnStart() {
-        ragdoll = GetComponent<Ragdoll>();
-        weapons = GetComponent<ActiveWeapon>();
-        aiming = GetComponent<CharacterAiming>();
-        postProcessing = FindObjectOfType<Volume>().profile;
-        cameraManager = FindObjectOfType<CameraManager>();
+        _ragdoll = GetComponent<Ragdoll>();
+        _weapons = GetComponent<ActiveWeapon>();
+        _aiming = GetComponent<CharacterAiming>();
+        _postProcessing = FindObjectOfType<Volume>().profile;
+        _cameraManager = FindObjectOfType<CameraManager>();
         UpdateVignette();
     }
 
     protected override void OnDeath(Vector3 direction) {
-        ragdoll.ActivateRagdoll();
+        _ragdoll.ActivateRagdoll();
         direction.Normalize();
         direction.y = 1.0f;
-        ragdoll.ApplyForce(direction * dieForce);
-        weapons.DropWeapon();
-        aiming.enabled = false;
-        cameraManager.EnableKillCam();
+        _ragdoll.ApplyForce(direction * dieForce);
+        _weapons.DropWeapon();
+        _aiming.enabled = false;
+        _cameraManager.EnableKillCam();
         GameEventsManager.Instance.PlayerDeath();
+        MouseEject mouseEject = FindObjectOfType<MouseEject>(); //a little work-around
+        mouseEject.EjectMouse();
+        mouseEject.canLockIn = false;
     }
 
     protected override void OnDamage(Vector3 direction) {
@@ -42,8 +45,7 @@ public class PlayerHealth : Health
     }
 
     private void UpdateVignette() {
-        Vignette vignette;
-        if (postProcessing.TryGet(out vignette)) {
+        if (_postProcessing.TryGet(out Vignette vignette)) {
             float percent = 1.0f - (currentHealth / maxHealth);
             vignette.intensity.value = percent * 0.6f;
         }

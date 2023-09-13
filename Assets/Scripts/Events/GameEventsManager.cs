@@ -15,12 +15,9 @@ public class GameEventsManager : MonoBehaviour
     }
 
     public event Action OnPlayerDeath;
-    public void PlayerDeath() 
+    public void PlayerDeath()
     {
-        if (OnPlayerDeath != null) 
-        {
-            OnPlayerDeath();
-        }
+        OnPlayerDeath?.Invoke();
     }
     
 }

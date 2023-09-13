@@ -61,7 +61,7 @@ public class FileDataHandler
         try 
         {
             // create the directory the file will be written to if it doesn't already exist
-            Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
 
             // serialize the C# game data object into Json
             string dataToStore = JsonUtility.ToJson(data, true);

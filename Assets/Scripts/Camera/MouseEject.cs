@@ -5,43 +5,49 @@ using UnityEngine;
 public class MouseEject : MonoBehaviour
 {
     public KeyCode ejectKey = KeyCode.Escape;
-    FlyCamera flyCam;
+    FlyCamera _flyCam;
+    public bool canLockIn=true;
 
     private void Awake() {
-        flyCam = GetComponent<FlyCamera>();
+        _flyCam = GetComponent<FlyCamera>();
     }
 
-    // Update is called once per frame
+    public void EjectMouse()
+    {
+        Cinemachine.CinemachineBrain cam = GetComponent<Cinemachine.CinemachineBrain>();
+        if (cam) {
+            cam.enabled = false;
+        }
+
+        CharacterAiming aiming = FindObjectOfType<CharacterAiming>();
+        if (aiming) {
+            aiming.enabled = false;
+        }
+
+        CharacterLocomotion locomotion = FindObjectOfType<CharacterLocomotion>();
+        if (locomotion) {
+            locomotion.enabled = false;
+        }
+
+        if (_flyCam) {
+            _flyCam.enabled = true;
+        }
+        else {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+    }
+    
     void Update()
     {
-        if (Input.GetKeyDown(ejectKey)) {
-            Cinemachine.CinemachineBrain camera = GetComponent<Cinemachine.CinemachineBrain>();
-            if (camera) {
-                camera.enabled = false;
-            }
-
-            CharacterAiming aiming = FindObjectOfType<CharacterAiming>();
-            if (aiming) {
-                aiming.enabled = false;
-            }
-
-            CharacterLocomotion locomotion = FindObjectOfType<CharacterLocomotion>();
-            if (locomotion) {
-                locomotion.enabled = false;
-            }
-
-            if (flyCam) {
-                flyCam.enabled = true;
-            }
-            else {
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
-            }
+        if (Input.GetKeyDown(ejectKey))
+        {
+            EjectMouse();
         }
-        if (Input.GetMouseButtonDown(0)) {
-            Cinemachine.CinemachineBrain camera = GetComponent<Cinemachine.CinemachineBrain>();
-            if (camera) {
-                camera.enabled = true;
+        if (Input.GetMouseButtonDown(0)&&canLockIn) {
+            Cinemachine.CinemachineBrain cam = GetComponent<Cinemachine.CinemachineBrain>();
+            if (cam) {
+                cam.enabled = true;
             }
 
             CharacterAiming aiming = FindObjectOfType<CharacterAiming>();
@@ -54,8 +60,8 @@ public class MouseEject : MonoBehaviour
                 locomotion.enabled = true;
             }
 
-            if (flyCam) {
-                flyCam.enabled = false;
+            if (_flyCam) {
+                _flyCam.enabled = false;
             }
 
             Cursor.visible = false;

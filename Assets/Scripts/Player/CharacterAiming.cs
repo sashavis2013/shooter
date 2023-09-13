@@ -8,19 +8,19 @@ public class CharacterAiming : MonoBehaviour
     public Cinemachine.AxisState yAxis = new Cinemachine.AxisState(-85, 85, false, false, 300, 0.02f, 0.02f, "Mouse Y", true);
     public bool isAiming;
 
-    Animator animator;
-    ActiveWeapon activeWeapon;
-    int isAimingParam = Animator.StringToHash("isAiming");
-    Vector3 cameraRotation;
+    Animator _animator;
+    ActiveWeapon _activeWeapon;
+    int _isAimingParam = Animator.StringToHash("isAiming");
+    Vector3 _cameraRotation;
 
-    int frame = 0;
+    int _frame = 0;
 
     // Start is called before the first frame update
     void Start() {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        animator = GetComponent<Animator>();
-        activeWeapon = GetComponent<ActiveWeapon>();
+        _animator = GetComponent<Animator>();
+        _activeWeapon = GetComponent<ActiveWeapon>();
 
         xAxis.Value = transform.eulerAngles.y;
         yAxis.Value = 0;
@@ -28,9 +28,9 @@ public class CharacterAiming : MonoBehaviour
 
     void Update() {
         isAiming = Input.GetMouseButton(1);
-        animator.SetBool(isAimingParam, isAiming);
+        _animator.SetBool(_isAimingParam, isAiming);
 
-        var weapon = activeWeapon.GetActiveWeapon();
+        var weapon = _activeWeapon.GetActiveWeapon();
         if (weapon) {
             weapon.recoil.recoilModifier = isAiming ? 0.3f : 1.0f;
         }
@@ -42,7 +42,7 @@ public class CharacterAiming : MonoBehaviour
 
         // This is to prevent large mouse deltas on first frame when entering play mode
         // from the editor.
-        if (frame++ > 5) {
+        if (_frame++ > 5) {
             // Update mouse axis
             xAxis.Update(deltaTime);
             yAxis.Update(deltaTime);
@@ -50,8 +50,8 @@ public class CharacterAiming : MonoBehaviour
         
 
         // Camera look up / down
-        cameraRotation.x = yAxis.Value;
-        cameraLookAt.localEulerAngles = cameraRotation;
+        _cameraRotation.x = yAxis.Value;
+        cameraLookAt.localEulerAngles = _cameraRotation;
 
         // Rotate player left / right
         var euler = transform.eulerAngles;
